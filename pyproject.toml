@@ -1,0 +1,12 @@
+[project]
+name = "contribution"
+version = "0.1.0"
+description = "무임하차 — 회의 기여도 산정 엔진"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-cov"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
