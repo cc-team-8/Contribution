@@ -19,6 +19,9 @@ def calc_speech_score(data: MemberMeetingData) -> Optional[float]:
     """
     if data.total_chars_during <= 0:
         return None
+    
+    actual_share   = data.own_chars / data.total_chars_during # 실제 발언 비중
+    expected_share = 1 / max(1, data.team_size) # 균등 기대치 (1/N)
 
     # 늦게 돌어오거나 일찍 나간 팀원이 불리하지 않도록 하기 위해 본인 참여 시간 내 글자수로 참여 시간을 계산.
-    return min(1.0, data.own_chars / data.total_chars_during)  # 1.0 상한 적용
+    return min(1.0, actual_share / expected_share)  # 1.0 상한 적용

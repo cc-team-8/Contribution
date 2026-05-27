@@ -32,6 +32,7 @@ model_member = MemberMeetingData(
     actual_attend_sec=3600,
     late_sec=0,
     own_chars=350, total_chars_during=1000,
+    team_size=4,
     actions=[
         ActionItem(completed=True, days_late=-2),
         ActionItem(completed=True, days_late=0),
@@ -50,6 +51,7 @@ freerider = MemberMeetingData(
     actual_attend_sec=900,    # 25% 참여
     late_sec=600,
     own_chars=30, total_chars_during=1000,
+    team_size=4,
     actions=[
         ActionItem(completed=False),
         ActionItem(completed=False),
@@ -68,6 +70,7 @@ observer = MemberMeetingData(
     actual_attend_sec=3600,
     late_sec=0,
     own_chars=200, total_chars_during=1000,
+    team_size=4,
     actions=[],  # 배정 없음 → 태스크 측정 불가, 가중치 재분배
 )
 print_result("케이스 3 — 태스크 없는 참관자 (재분배)", calc_contribution(observer))

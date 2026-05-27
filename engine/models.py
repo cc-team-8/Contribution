@@ -86,7 +86,8 @@ class MemberMeetingData:
     # 발언 축
     own_chars:          int   = 0
     total_chars_during: int   = 0
-
+    team_size:          int   = 1
+    
     # 태스크 축
     actions: list[ActionItem] = field(default_factory=list)
 
