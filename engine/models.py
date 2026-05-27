@@ -35,6 +35,7 @@ class TeamSettings:
      - min_attend_ratio        (float): 최소 참여 기준 비율 (기본 0.40)
      - punctuality_grace_ratio (float): 허용 지각 비율 - 회의 시간 대비 (기본 0.10)
      - absence_exclude_excused (bool):  사유 결석 제외 여부 (기본 False)
+     - leader_bonus            (float): 팀장 기본 보정값
     """
     weight_task:             float = 0.50
     weight_speech:           float = 0.30
@@ -43,6 +44,7 @@ class TeamSettings:
     min_attend_ratio:        float = 0.40
     punctuality_grace_ratio: float = 0.10
     absence_exclude_excused: bool  = False
+    leader_bonus:            float = 0.05
 
 
 @dataclass
@@ -55,9 +57,11 @@ class ActionItem:
      - days_late (float | None):   마감 기준 지연일
                                    음수 = 마감 전, 0 = 당일, 양수 = 초과
                                    None = 마감 정보 없음 (완료 시 만점 처리)
+     - difficulty (float):         액션 난이도 가중치
     """
     completed:  bool
     days_late:  Optional[float] = None
+    difficulty: float           = 1.0  # 0.5=쉬움, 1.0=보통, 2.0=어려움
 
 
 @dataclass
@@ -72,9 +76,11 @@ class MemberMeetingData:
      - late_sec           (float):            지각한 시간 (초, 기본 0)
      - own_chars          (int):              본인 발언 글자수
      - total_chars_during (int):              본인 참여 시간 내 전체 참여자 글자수
+     - team_size          (int):              회의 참여 팀원 수
      - actions            (list[ActionItem]): 배정된 액션 아이템 목록
      - audio_loss_pct     (float):            오디오 캡처 손실 % (기본 0)
      - excused_absence    (bool):             사유 결석 여부 (기본 False)
+     - is_leader          (bool):             팀장 여부
     """
     name: str
 
@@ -94,6 +100,7 @@ class MemberMeetingData:
     # 메타
     audio_loss_pct:  float = 0.0
     excused_absence: bool  = False
+    is_leader:       bool  = False
 
 
 @dataclass

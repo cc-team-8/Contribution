@@ -85,6 +85,29 @@ def test_task_heavy_cfg_beats_speech_heavy():
            calc_contribution(member, cfg_speech).composite
 
 
+# 팀장이면 종합 점수에 leader_bonus(기본 0.05)가 가산됨
+def test_leader_bonus_applied():
+    normal = calc_contribution(make_member())
+    leader = calc_contribution(make_member(is_leader=True))
+    assert leader.composite == pytest.approx(normal.composite + 0.05, abs=1e-3)
+    
+# 팀장 보정 후 1.0 초과 시 1.0 상한으로 고정
+def test_leader_bonus_capped_at_one():
+    r = calc_contribution(make_member(
+        own_chars=1000, total_chars=1000,   # 발언 만점
+        actions=[ActionItem(completed=True, days_late=-1)],
+        is_leader=True,
+    ))
+    assert r.composite <= 1.0
+    
+# 팀장 보정값을 커스텀 설정으로 조정 가능
+def test_leader_bonus_custom():
+    cfg = TeamSettings(leader_bonus=0.10)
+    normal = calc_contribution(make_member(), cfg)
+    leader = calc_contribution(make_member(is_leader=True), cfg)
+    assert leader.composite == pytest.approx(normal.composite + 0.10, abs=1e-3)
+
+
 # 회의 길이에 따른 신뢰도 등급 분기 검증
 # 10분->Low, 20분->Medium, 60분->High
 @pytest.mark.parametrize("total_sec,expected_label", [

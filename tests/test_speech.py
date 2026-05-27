@@ -26,7 +26,6 @@ def test_meets_expected_share():
     m = make_member(own_chars=250, total_chars=1000, team_size=4)
     assert calc_speech_score(m) == pytest.approx(1.0)
  
- 
 # 4명 팀에서 기대치(25%) 절반인 12.5% 발언 
 # → 0.5점
 def test_below_expected_share():

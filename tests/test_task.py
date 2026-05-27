@@ -69,6 +69,16 @@ def test_mixed_actions():
         ActionItem(completed=False, days_late=None),
     ])
     assert calc_task_score(m) == pytest.approx(0.5)
+    
+# 어려운 액션(difficulty=2.0) 완료 + 쉬운 액션(difficulty=0.5) 미완료
+# 완료율 = 2.0 / (2.0+0.5) = 0.8, 마감준수율 = (100×2.0) / (2.5) / 100 = 0.8
+# → task = 0.8×0.5 + 0.8×0.5 = 0.8
+def test_difficulty_weighting():
+    m = make_member(actions=[
+        ActionItem(completed=True,  days_late=0,    difficulty=2.0),
+        ActionItem(completed=False, days_late=None, difficulty=0.5),
+    ])
+    assert calc_task_score(m) == pytest.approx(0.8)
 
 # 단일 완료 액션의 day_late 별 태스크 점수
 # -> 내부 배분 (50/50) 검증

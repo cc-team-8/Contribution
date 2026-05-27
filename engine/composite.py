@@ -65,6 +65,10 @@ def calc_contribution(
     low_attend = attend_ratio < cfg.min_attend_ratio
     if low_attend:
         composite *= attend_ratio / cfg.min_attend_ratio  # 참여율이 낮을수록 패널티 증가
+        
+    # 5. 팀장 보정 - 계산 완료 후 bonus 가산
+    if data.is_leader:
+        composite = min(1.0, composite + cfg.leader_bonus)
 
     return ContributionResult(
         name            = data.name,

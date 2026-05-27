@@ -21,6 +21,7 @@ def make_member(
     actions             = _UNSET,
     audio_loss:   float = 0.0,
     excused:      bool  = False,
+    is_leader:    bool  = False,
 ) -> MemberMeetingData:
     """
     함수명: make_member
@@ -49,6 +50,7 @@ def make_member(
         actions            = actions,
         audio_loss_pct     = audio_loss,
         excused_absence    = excused,
+        is_leader          = is_leader,
     )
 
 

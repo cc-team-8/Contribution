@@ -48,13 +48,17 @@ def calc_task_score(data: MemberMeetingData) -> Optional[float]:
     if not data.actions:
         return None
 
-    total = len(data.actions)
-
-    # 완료율: 완료한 액션 수 / 전체 액션 수
-    completion_ratio = sum(1 for a in data.actions if a.completed) / total
-
-    # 마감 준수율: 액션별 점수 평균을 0~1 로 정규화
-    deadline_avg = sum(_deadline_score(a) for a in data.actions) / total / 100.0
-
+    total_weight = sum(a.difficulty for a in data.actions) # 난이도 합산
+    
+    # 완료율: 완료한 액션의 난이도 합 / 전체 난이도 합
+    completion_ratio = sum(
+        a.difficulty for a in data.actions if a.completed
+    ) / total_weight
+ 
+    # 마감 준수율: 난이도 가중 평균 (0~1 정규화)
+    deadline_avg = sum(
+        _deadline_score(a) * a.difficulty for a in data.actions
+    ) / total_weight / 100.0
+ 
     # 내부 배분 50/50 (TODO: 09-미결정-사항 확정 후 비율 조정)
     return completion_ratio * 0.5 + deadline_avg * 0.5

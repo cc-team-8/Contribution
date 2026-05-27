@@ -81,3 +81,39 @@ print_result("케이스 3 — 태스크 없는 참관자 (재분배)", calc_cont
 # 점수 변화 비교
 cfg_custom = TeamSettings(weight_task=0.7, weight_speech=0.2, weight_attend=0.1)
 print_result("케이스 4 — 모범 팀원 (태스크 중심 팀)", calc_contribution(model_member, cfg_custom))
+
+
+# 케이스 5: 어려운 액션 완료 + 쉬운 액션 미완료
+# -> 난이도 가중치 영향 확인
+difficulty_member = MemberMeetingData(
+    name="최난이",
+    meeting_total_sec=3600,
+    actual_attend_sec=3600,
+    late_sec=0,
+    own_chars=300, total_chars_during=1000,
+    team_size=4,
+    actions=[
+        ActionItem(completed=True,  days_late=0,    difficulty=2.0),  # 어려운 액션 완료
+        ActionItem(completed=False, days_late=None, difficulty=0.5),  # 쉬운 액션 미완료
+    ],
+)
+print_result("케이스 5 — 난이도 가중치 (어려운 완료 + 쉬운 미완료)", calc_contribution(difficulty_member))
+
+
+# 케이스 6: 케이스 1과 동일 조건 + 팀장 
+# → leader_bonus 가산 확인
+leader_member = MemberMeetingData(
+    name="김팀장",
+    meeting_total_sec=3600,
+    actual_attend_sec=3600,
+    late_sec=0,
+    own_chars=350, total_chars_during=1000,
+    team_size=4,
+    is_leader=True,
+    actions=[
+        ActionItem(completed=True, days_late=-2),
+        ActionItem(completed=True, days_late=0),
+        ActionItem(completed=True, days_late=1),
+    ],
+)
+print_result("케이스 6 — 팀장 보정 (케이스 1 + leader_bonus)", calc_contribution(leader_member))
