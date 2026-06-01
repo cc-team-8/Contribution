@@ -1,5 +1,5 @@
 # Author: Garam Mo
-# Last Modified: 2026/05/26 by Garam Mo
+# Last Modified: 2026/06/01 by Garam Mo
 #
 # 역할: 참석 축 점수 계산 (출석 비율 + 정시 점수)
 # 목적: 회의 참여 성실도를 독립적으로 측정
@@ -10,7 +10,7 @@ from engine.models import MemberMeetingData, TeamSettings
 
 def calc_attendance_score(
     data: MemberMeetingData,
-    cfg:  TeamSettings,
+    cfg:  TeamSettings = None,
 ) -> Optional[float]:
     """
     함수명: calc_attendance_score
@@ -21,6 +21,10 @@ def calc_attendance_score(
     출력:
      - (float | None): 참석 축 점수 (0~1). 회의 총 시간 0 일 경우 None
     """
+    # cfg를 넘지기 않으면 기본값 빠르게 호출
+    if cfg is None:
+        cfg = TeamSettings()
+        
     if data.meeting_total_sec <= 0:
         return None
 
