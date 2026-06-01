@@ -20,20 +20,20 @@ def test_deadline_before_due_normal():
 def test_deadline_same_day_normal():
     assert _deadline_score(make_action(days_late=0), "normal") == 100.0
 
-# normal 모드: 1일 이내 초과 → 60점
+# normal 모드: 1일 이내 초과 → 70점
 @pytest.mark.parametrize("days_late", [0.5, 1.0])
 def test_deadline_1day_normal(days_late):
-    assert _deadline_score(make_action(days_late=days_late), "normal") == 60.0
+    assert _deadline_score(make_action(days_late=days_late), "normal") == 70.0
 
-# normal 모드: 3일 이내 초과 → 30점
+# normal 모드: 3일 이내 초과 → 40점
 @pytest.mark.parametrize("days_late", [1.5, 3.0])
 def test_deadline_3day_normal(days_late):
-    assert _deadline_score(make_action(days_late=days_late), "normal") == 30.0
+    assert _deadline_score(make_action(days_late=days_late), "normal") == 40.0
 
-# normal 모드: 3일 초과 → 10점
+# normal 모드: 3일 초과 → 20점
 @pytest.mark.parametrize("days_late", [3.1, 7.0, 30.0])
 def test_deadline_over_3day_normal(days_late):
-    assert _deadline_score(make_action(days_late=days_late), "normal") == 10.0
+    assert _deadline_score(make_action(days_late=days_late), "normal") == 20.0
 
 # 미완료 액션은 모드와 관계없이 0점
 def test_deadline_incomplete_always_zero():

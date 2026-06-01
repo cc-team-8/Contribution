@@ -58,7 +58,7 @@ def calc_cumulative_score(
             score          = 0.0,
             meeting_count  = len(meeting_scores),
             included_count = 0,
-            excluded_count = excluded_count + (len(eligible) - len(included) - excluded_count),
+            excluded_count = len(eligible),  # 정규 회의 전부 제외된 경우
         )
  
     # 4. 회의 시간 가중 평균

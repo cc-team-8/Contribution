@@ -17,10 +17,12 @@ class ReliabilityLabel(str, Enum):
      - HIGH   (str): 2축 모두 측정 + 회의 30분 이상 + 오디오 손실 5% 미만
      - MEDIUM (str): 1축 측정 또는 회의 15~30분 또는 일부 캡처 손실
      - LOW    (str): 0축 측정 또는 회의 15분 미만 또는 캡처 손실 다수
+     - ABSENT (str): 완전 결석 - 측정 데이터 없음
     """
     HIGH   = "High"
     MEDIUM = "Medium"
     LOW    = "Low"
+    ABSENT = "Absent"
     
  
 @dataclass

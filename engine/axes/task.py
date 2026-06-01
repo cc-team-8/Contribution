@@ -10,23 +10,23 @@ from engine.models import MemberMeetingData, ActionItem, TeamSettings
 
 # 마감 준수 점수표 — (days_late 상한, 점수) 리스트
 DEADLINE_TABLES: dict[str, list[tuple[float, float]]] = {
-    # 엄격 모드: 초과 시 빠르게 감점, 당일은 만점
+    # 엄격 모드: 초과 시 빠르게 감점
     "strict": [
-        (1.0, 30.0),
-        (3.0, 10.0),
-        (float("inf"), 0.0),
+        (1.0, 40.0),
+        (3.0, 20.0),
+        (float("inf"), 10.0),
     ],
     # 표준 모드 (스펙 기준)
     "normal": [
-        (1.0, 60.0),           # 1일 이내 초과
-        (3.0, 30.0),           # 3일 이내 초과
-        (float("inf"), 10.0),  # 그 이상
+        (1.0, 70.0),           # 1일 이내 초과
+        (3.0, 40.0),           # 3일 이내 초과
+        (float("inf"), 20.0),  # 그 이상
     ],
     # 관대 모드: 늦어도 어느 정도 인정
     "lenient": [
-        (3.0, 80.0),
-        (7.0, 50.0),
-        (float("inf"), 20.0),
+        (3.0, 90.0),
+        (7.0, 60.0),
+        (float("inf"), 30.0),
     ],
 }
 

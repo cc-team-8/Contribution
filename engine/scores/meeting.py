@@ -38,7 +38,7 @@ def calc_meeting_score(
             speech_score         = None,
             attend_score         = None,
             meeting_contribution = 0.0,
-            reliability          = ReliabilityLabel.LOW,
+            reliability          = ReliabilityLabel.ABSENT,
             low_attend_flag      = True,
             weights_used         = {},
             is_official          = data.is_official,
