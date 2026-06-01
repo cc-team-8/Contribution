@@ -23,7 +23,7 @@ def print_result(label: str, result):
     print(f"  적용 가중치  : {result.weights_used}")
 
 
-# 케이스 1: 모범 팀원
+# 케이스 1: 모범 팀원ㅂ
 # 전 회의 참석 + 지각 없음 + 액션 모두 완료
 # 높은 점수 기준선 확인
 model_member = MemberMeetingData(
