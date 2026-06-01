@@ -49,6 +49,10 @@ def calc_task_contribution(
  
     mode         = cfg.deadline_mode
     total_weight = sum(a.difficulty for a in actions)
+
+    # difficulty=0 인 액션이 있을 경우 단순 평균으로 폴백
+    if total_weight <= 0:
+        total_weight = len(actions)
  
     # 완료율: 완료한 액션의 난이도 합 / 전체 난이도 합
     completed_count  = sum(1 for a in actions if a.completed)

@@ -68,14 +68,13 @@ def calc_meeting_score(
         meeting_contribution = sum(v[0] * v[1] for v in measurable.values()) / total_weight
         weights_used         = {k: round(v[1] / total_weight, 6) for k, v in measurable.items()}
 
-    # 3. 최소 참여 기준 미달 시 비례 하향 조정
+    # 3. 최소 참여 기준 미달 여부 플래그만 표시
+    # 참석 점수(attend_score)에서 이미 출석 비율이 반영되므로 추가 하향 조정 없음
     attend_ratio = (
         data.actual_attend_sec / data.meeting_total_sec
         if data.meeting_total_sec > 0 else 0.0
     )
     low_attend = attend_ratio < cfg.min_attend_ratio
-    if low_attend:
-        meeting_contribution *= attend_ratio / cfg.min_attend_ratio  # 참여율 낮을수록 패널티 증가
 
     return MeetingScore(
         name                 = data.name,
