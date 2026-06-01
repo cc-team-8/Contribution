@@ -7,22 +7,22 @@
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Optional
-
-
+ 
+ 
 class ReliabilityLabel(str, Enum):
     """
     함수명: ReliabilityLabel
     설명: 기여도 측정 결과의 신뢰도 등급을 나타내는 열거형.
     출력:
-     - HIGH   (str): 3축 모두 측정 + 회의 30분 이상 + 오디오 손실 5% 미만
-     - MEDIUM (str): 2축 측정 또는 회의 15~30분 또는 일부 캡처 손실
-     - LOW    (str): 1축 이하 또는 회의 15분 미만 또는 캡처 손실 다수
+     - HIGH   (str): 2축 모두 측정 + 회의 30분 이상 + 오디오 손실 5% 미만
+     - MEDIUM (str): 1축 측정 또는 회의 15~30분 또는 일부 캡처 손실
+     - LOW    (str): 0축 측정 또는 회의 15분 미만 또는 캡처 손실 다수
     """
     HIGH   = "High"
     MEDIUM = "Medium"
     LOW    = "Low"
-
-
+    
+ 
 @dataclass
 class TeamSettings:
     """
@@ -54,7 +54,7 @@ class TeamSettings:
     absence_grace_sec:       float = 30.0   # 자리비움 인정 시간 (데이터 수집 레이어용)
  
     # 팀장 보정
-    leader_bonus: float = 0.2   # final × (1 + leader_bonus), 기본 0.2 = 보정 없음
+    leader_bonus: float = 0.2   # final × (1 + leader_bonus), 기본 0.2
  
     # 발언 설정
     action_chars_limit: int = 500   # 발언 1회 글자수 상한
@@ -67,8 +67,8 @@ class TeamSettings:
  
     # 공개 범위 (계산 로직 아닌 표시 정책)
     score_visibility: str = "all"   # all / self / leader
-
-
+    
+ 
 @dataclass
 class ActionItem:
     """
@@ -86,8 +86,8 @@ class ActionItem:
     days_late:   Optional[float] = None
     difficulty:  int             = 2     # 1=하, 2=중(기본), 3=상
     assigned_at: Optional[str]   = None  # ISO 날짜 (예: "2025-01-15")
-
-
+ 
+ 
 @dataclass
 class MemberMeetingData:
     """
@@ -109,6 +109,7 @@ class MemberMeetingData:
      - absent             (bool):  완전 결석 여부 - 한 번도 참여 안 함 (기본 False)
      - is_official        (bool):  정규 회의 여부 - 누적 포함 판단용 (기본 True)
      - is_leader          (bool):  팀장 여부 (기본 False)
+     - actions            (list[ActionItem]): 이 회의에서 배정된 액션 아이템 목록 (기본 빈 리스트)
     """
     name:        str
     meeting_id:  str
@@ -120,7 +121,7 @@ class MemberMeetingData:
  
     # 발언 축
     own_chars:          int   = 0
-    utterance_count:    int   = 1   
+    utterance_count:    int   = 1
     total_chars_during: int   = 0
     team_size:          int   = 1
  
@@ -131,8 +132,11 @@ class MemberMeetingData:
     absent:            bool  = False
     is_official:       bool  = True
     is_leader:         bool  = False
-
-
+ 
+    # 태스크 — 이 회의에서 배정된 액션 목록 (태스크 기여도 계산 시 모아서 사용)
+    actions: list["ActionItem"] = field(default_factory=list)
+ 
+ 
 @dataclass
 class MeetingScore:
     """

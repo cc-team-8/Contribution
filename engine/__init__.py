@@ -1,26 +1,27 @@
 """
 무임하차 기여도 엔진 — 공개 API
 
-외부(테스트, 스크립트, 추후 API 레이어)에서는
-이 __init__.py 만 import 하면 된다.
-
-  from engine import calc_contribution, TeamSettings, MemberMeetingData, ActionItem
+from engine import (
+    ActionItem, MemberMeetingData, TeamSettings,
+    calc_meeting_score, calc_task_contribution,
+    calc_cumulative_score, calc_final_score,
+)
 """
 
-from engine.models     import (
-    ActionItem,
-    MemberMeetingData,
-    TeamSettings,
-    ContributionResult,
+from engine.models import (
+    ActionItem, MemberMeetingData, TeamSettings,
+    MeetingScore, TaskScore, CumulativeScore, FinalScore,
     ReliabilityLabel,
 )
-from engine.composite  import calc_contribution
+from engine.scores.meeting    import calc_meeting_score
+from engine.scores.task_score import calc_task_contribution, collect_actions
+from engine.scores.cumulative import calc_cumulative_score
+from engine.scores.final      import calc_final_score
 
 __all__ = [
-    "ActionItem",
-    "MemberMeetingData",
-    "TeamSettings",
-    "ContributionResult",
+    "ActionItem", "MemberMeetingData", "TeamSettings",
+    "MeetingScore", "TaskScore", "CumulativeScore", "FinalScore",
     "ReliabilityLabel",
-    "calc_contribution",
+    "calc_meeting_score", "calc_task_contribution", "collect_actions",
+    "calc_cumulative_score", "calc_final_score",
 ]
