@@ -56,38 +56,3 @@ def _deadline_score(item: ActionItem, mode: str = "normal") -> float:
         if d <= threshold:
             return score
     return 0.0
-
-
-def calc_task_score(
-    data: MemberMeetingData,
-    cfg:  TeamSettings = None,
-) -> Optional[float]:    
-    """
-    함수명: calc_task_score
-    설명: 태스크 완료 축 점수를 계산한다. 배정 액션이 없으면 측정 불가로 None 을 반환한다.
-    입력:
-     - data (MemberMeetingData): 팀원의 회의 데이터
-    출력:
-     - (float | None): 태스크 완료 축 점수 (0~1). 배정 액션 0개일 경우 None
-    """
-    if cfg is None:
-        cfg = TeamSettings()
-    
-    if not data.actions:
-        return None
-
-    mode         = cfg.deadline_mode
-    total_weight = sum(a.difficulty for a in data.actions) # 난이도 합산
-    
-    # 완료율: 완료한 액션의 난이도 합 / 전체 난이도 합
-    completion_ratio = sum(
-        a.difficulty for a in data.actions if a.completed
-    ) / total_weight
- 
-    # 마감 준수율: 난이도 가중 평균 (0~1 정규화)
-    deadline_avg = sum(
-        _deadline_score(a, mode) * a.difficulty for a in data.actions
-    ) / total_weight / 100.0
- 
-    # 내부 배분 50/50
-    return completion_ratio * 0.5 + deadline_avg * 0.5
