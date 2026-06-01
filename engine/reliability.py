@@ -1,5 +1,5 @@
 # Author: Garam Mo
-# Last Modified: 2026/05/26 by Garam Mo
+# Last Modified: 2026/06/01 by Garam Mo
 #
 # 역할: 측정 조건에 따른 신뢰도 등급(High/Medium/Low) 산정
 # 목적: 데이터 품질을 점수와 함께 제공해 결과 해석의 신뢰성을 높임
@@ -27,8 +27,8 @@ def get_reliability(
     if measured_axes <= 1 or meeting_min < 15 or loss >= 20:
         return ReliabilityLabel.LOW
 
-    # HIGH 조건: 3축 모두 + 30분 이상 + 손실 5% 미만
-    if measured_axes == 3 and meeting_min >= 30 and loss < 5:
+    # HIGH 조건: 2축 모두 + 30분 이상 + 손실 5% 미만
+    if measured_axes == 2 and meeting_min >= 30 and loss < 5:
         return ReliabilityLabel.HIGH
 
     # 위 두 조건 모두 해당 없으면 MEDIUM
