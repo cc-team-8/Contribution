@@ -1,5 +1,5 @@
 # Author: Garam Mo
-# Last Modified: 2026/06/04 by Garam Mo
+# Last Modified: 2026/06/21 by Garam Mo
 #
 # 역할: API 요청·응답 Pydantic 스키마 정의
 # 목적: 엔진 dataclass 와 FastAPI 간의 타입 매핑
@@ -63,6 +63,9 @@ class TaskContributionRequest(BaseModel):
     name:    str
     actions: list[ActionItemSchema]
     cfg:     TeamSettingsSchema = TeamSettingsSchema()
+    # 팀 전체 멤버의 완료 난이도 가중 합 평균 — 완료량(volume_score) 계산 기준.
+    # None 이면 비교 기준 없음으로 처리해 completion_ratio·deadline_avg 두 축만 사용.
+    team_avg_completed_weight: Optional[float] = None
 
 
 # ── 회의 종합 기여도 요청 ─────────────────────────────
@@ -102,6 +105,9 @@ class FullPipelineRequest(BaseModel):
     meetings: list[MemberMeetingDataSchema]
     is_leader: bool = False
     cfg:       TeamSettingsSchema = TeamSettingsSchema()
+    # 팀 전체 멤버의 완료 난이도 가중 합 평균 — 완료량(volume_score) 계산 기준.
+    # None 이면 비교 기준 없음으로 처리해 completion_ratio·deadline_avg 두 축만 사용.
+    team_avg_completed_weight: Optional[float] = None
 
 
 # ─────────────────────────────────────────
@@ -128,6 +134,8 @@ class TaskScoreResponse(BaseModel):
     score:              Optional[float]
     total_actions:      int
     completed_actions:  int
+    completed_weight:   float           = 0.0
+    volume_score:       Optional[float] = None
 
 
 class CumulativeScoreResponse(BaseModel):

@@ -1,5 +1,5 @@
 # Author: Garam Mo
-# Last Modified: 2026/06/04 by Garam Mo
+# Last Modified: 2026/06/21 by Garam Mo
 #
 # 역할: 전체 파이프라인 엔드포인트 (단일 팀원의 최종 점수를 한 번에 계산)
 # 목적: NestJS에서 여러 엔드포인트를 순서대로 호출하는 번거로움을 줄이기 위한 편의 엔드포인트
@@ -34,7 +34,10 @@ def full_pipeline(req: FullPipelineRequest) -> FullPipelineResponse:
     cumulative = calc_cumulative_score(name, meeting_scores, cfg)
 
     # 3. 태스크 기여도
-    task = calc_task_contribution(name, collect_actions(meetings), cfg)
+    task = calc_task_contribution(
+        name, collect_actions(meetings), cfg,
+        team_avg_completed_weight=req.team_avg_completed_weight,
+    )
 
     # 4. 최종 종합 기여도
     final = calc_final_score(cumulative, task, cfg, is_leader=req.is_leader)
@@ -53,6 +56,8 @@ def full_pipeline(req: FullPipelineRequest) -> FullPipelineResponse:
             score              = task.score,
             total_actions      = task.total_actions,
             completed_actions  = task.completed_actions,
+            completed_weight   = task.completed_weight,
+            volume_score       = task.volume_score,
         ),
         final = FinalScoreResponse(
             name           = final.name,
