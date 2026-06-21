@@ -42,6 +42,7 @@ class TeamSettingsSchema(BaseModel):
     weight_speech_in_meeting: float = 0.75
     weight_attend_in_meeting: float = 0.25
     weight_task_in_final:     float = 0.50
+    weight_volume_in_task:    float = 0.50
     min_attend_ratio:         float = 0.40
     punctuality_grace_ratio:  float = 0.10
     absence_grace_sec:        float = 30.0

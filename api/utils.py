@@ -69,6 +69,7 @@ def to_team_settings(s: TeamSettingsSchema) -> TeamSettings:
         weight_speech_in_meeting = s.weight_speech_in_meeting,
         weight_attend_in_meeting = s.weight_attend_in_meeting,
         weight_task_in_final     = s.weight_task_in_final,
+        weight_volume_in_task    = s.weight_volume_in_task,
         min_attend_ratio         = s.min_attend_ratio,
         punctuality_grace_ratio  = s.punctuality_grace_ratio,
         absence_grace_sec        = s.absence_grace_sec,
