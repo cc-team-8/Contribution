@@ -1,5 +1,5 @@
 # Author: Garam Mo
-# Last Modified: 2026/06/01 by Garam Mo
+# Last Modified: 2026/06/21 by Garam Mo
 #
 # 역할: 기여도 산정에 사용되는 모든 데이터 구조체 정의
 # 목적: 입력·출력·설정 타입을 한 곳에서 관리해 파일 간 의존성을 단순화
@@ -34,6 +34,7 @@ class TeamSettings:
      - weight_speech_in_meeting (float): 회의 내 발언 비중 (기본 0.75)
      - weight_attend_in_meeting (float): 회의 내 참석 비중 (기본 0.25)
      - weight_task_in_final     (float): 최종 점수에서 태스크 비중 (기본 0.50, 생성 시에만 설정)
+     - weight_volume_in_task     (float): 태스크 점수 내 완료량(팀 평균 대비) 비중 (기본 0.50)
      - min_attend_ratio         (float): 최소 참여 기준 비율 (기본 0.40)
      - punctuality_grace_ratio  (float): 허용 지각 비율 - 회의 시간 대비 (기본 0.10)
      - absence_grace_sec        (float): 자리비움 인정 시간 초 (기본 30.0, 데이터 수집 레이어용)
@@ -49,6 +50,12 @@ class TeamSettings:
  
     # 최종 합산 비율 (그룹 생성 시에만 설정)
     weight_task_in_final: float = 0.50
+
+    # 태스크 점수 내부 비중 — 완료량(팀 평균 대비, team_avg_completed_weight 제공 시에만 적용)
+    # 0.5: completion_ratio+deadline_avg(합 50%) 대 volume_score(50%) 동등 비중.
+    # "받은 task가 적어 비율만 채운 사람"이 "더 많이/어렵게 완료한 사람"보다 task_score
+    # 자체에서 역전되지 않으려면 대략 0.45 이상이 필요함 (검증된 여러 시나리오 기준).
+    weight_volume_in_task: float = 0.50
  
     # 참석 설정
     min_attend_ratio:        float = 0.40
@@ -182,11 +189,15 @@ class TaskScore:
      - score             (float | None):  태스크 기여도 - None 이면 액션 없음
      - total_actions     (int):           전체 액션 수
      - completed_actions (int):           완료된 액션 수
+     - completed_weight  (float):         완료한 액션의 난이도 가중 합
+     - volume_score      (float | None):  완료량 점수(팀 평균 대비) - 비교 기준 없으면 None
     """
     name:               str
     score:              Optional[float]
     total_actions:      int
     completed_actions:  int
+    completed_weight:   float           = 0.0
+    volume_score:       Optional[float] = None
  
  
 @dataclass
