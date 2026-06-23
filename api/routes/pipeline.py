@@ -6,7 +6,7 @@
 
 from fastapi import APIRouter
 from api.schemas import FullPipelineRequest, FullPipelineResponse
-from api.schemas import CumulativeScoreResponse, TaskScoreResponse, FinalScoreResponse
+from api.schemas import CumulativeScoreResponse, TaskScoreResponse, FinalScoreResponse, MeetingScoreResponse
 from api.utils import to_member_data, to_team_settings
 
 from engine import (
@@ -67,4 +67,21 @@ def full_pipeline(req: FullPipelineRequest) -> FullPipelineResponse:
             weights_used   = final.weights_used,
             leader_applied = final.leader_applied,
         ),
+        meeting_scores = [
+            MeetingScoreResponse(
+                name                 = ms.name,
+                meeting_id           = ms.meeting_id,
+                meeting_total_sec    = ms.meeting_total_sec,
+                speech_score         = ms.speech_score,
+                attend_score         = ms.attend_score,
+                meeting_contribution = ms.meeting_contribution,
+                reliability          = ms.reliability.value,
+                low_attend_flag      = ms.low_attend_flag,
+                weights_used         = ms.weights_used,
+                is_official          = ms.is_official,
+                excused_absence      = ms.excused_absence,
+                absent               = ms.absent,
+            )
+            for ms in meeting_scores
+        ],
     )

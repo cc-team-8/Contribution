@@ -160,7 +160,13 @@ class FinalScoreResponse(BaseModel):
 
 
 class FullPipelineResponse(BaseModel):
-    name:       str
-    meeting:    CumulativeScoreResponse
-    task:       TaskScoreResponse
-    final:      FinalScoreResponse
+    name:           str
+    meeting:        CumulativeScoreResponse
+    task:           TaskScoreResponse
+    final:          FinalScoreResponse
+    # 입력으로 받은 각 회의의 단일 회의 점수 상세(발언/참석 축 분리값 포함).
+    # NestJS가 회의 1건만 보내 호출하는 ①(contribution_scores 저장) 경로에서
+    # attend_score(출석비율+지각 페널티가 반영된 값) 등을 가져다 쓰기 위해 추가.
+    # 기존 클라이언트는 이 필드를 몰라도 동작에 영향 없음(추가 필드, optional 아님이지만
+    # 항상 채워서 반환하므로 누락 걱정 없음).
+    meeting_scores: list[MeetingScoreResponse] = []
