@@ -34,7 +34,11 @@ class TeamSettings:
      - weight_speech_in_meeting (float): 회의 내 발언 비중 (기본 0.75)
      - weight_attend_in_meeting (float): 회의 내 참석 비중 (기본 0.25)
      - weight_task_in_final     (float): 최종 점수에서 태스크 비중 (기본 0.50, 생성 시에만 설정)
-     - weight_volume_in_task     (float): 태스크 점수 내 완료량(팀 평균 대비) 비중 (기본 0.50)
+     - weight_volume_in_task     (float): ⚠ DEPRECATED - 더 이상 점수 계산에 쓰이지 않음.
+                                         calc_task_contribution() 이 더는 volume_score를
+                                         산출하지 않으므로 이 값은 무시된다. 필드 자체는
+                                         호출부/스키마 하위 호환을 위해 남겨둔 것으로,
+                                         다음 정리 작업에서 일괄 제거 예정 (기본 0.50)
      - min_attend_ratio         (float): 최소 참여 기준 비율 (기본 0.40)
      - punctuality_grace_ratio  (float): 허용 지각 비율 - 회의 시간 대비 (기본 0.10)
                                          late_threshold_sec 미설정(None) 시에만 사용되는
@@ -61,10 +65,8 @@ class TeamSettings:
     # 최종 합산 비율 (그룹 생성 시에만 설정)
     weight_task_in_final: float = 0.50
 
-    # 태스크 점수 내부 비중 — 완료량(팀 평균 대비, team_avg_completed_weight 제공 시에만 적용)
-    # 0.5: completion_ratio+deadline_avg(합 50%) 대 volume_score(50%) 동등 비중.
-    # "받은 task가 적어 비율만 채운 사람"이 "더 많이/어렵게 완료한 사람"보다 task_score
-    # 자체에서 역전되지 않으려면 대략 0.45 이상이 필요함 (검증된 여러 시나리오 기준).
+    # ⚠ DEPRECATED — calc_task_contribution() 이 더는 volume_score를 계산하지 않으므로
+    # 이 가중치는 무시된다. 하위 호환을 위해 필드만 유지 (다음 정리 작업에서 제거 예정).
     weight_volume_in_task: float = 0.50
  
     # 참석 설정
