@@ -37,6 +37,16 @@ class TeamSettings:
      - weight_volume_in_task     (float): 태스크 점수 내 완료량(팀 평균 대비) 비중 (기본 0.50)
      - min_attend_ratio         (float): 최소 참여 기준 비율 (기본 0.40)
      - punctuality_grace_ratio  (float): 허용 지각 비율 - 회의 시간 대비 (기본 0.10)
+                                         late_threshold_sec 미설정(None) 시에만 사용되는
+                                         구(舊) 방식. 회의 길이에 비례하는 상대 기준이라
+                                         late_threshold_sec 가 있으면 그 쪽이 우선한다.
+     - late_threshold_sec       (float | None): 지각 기준 초 - 회의 시작 후 이 시간까지는
+                                         지각 감점 없음 (기본 None = 비활성, 구 방식 사용).
+                                         절대 시간 기준이라 회의 길이와 무관하게 일정함.
+     - late_max_sec             (float | None): 지각 최대 인정 시간 초 - late_threshold_sec
+                                         초과분부터 이 시간까지 선형 감점, 초과 시 정시 축
+                                         점수 0 (기본 None). late_threshold_sec 가 설정된
+                                         경우에만 의미를 가짐. 0 이하면 임계 초과 즉시 0.
      - absence_grace_sec        (float): 자리비움 인정 시간 초 (기본 30.0, 데이터 수집 레이어용)
      - leader_bonus             (float): 팀장 보정 계수 - final × (1 + n) (기본 0.2)
      - action_chars_limit       (int):   발언 1회 글자수 상한 (기본 500)
@@ -60,6 +70,8 @@ class TeamSettings:
     # 참석 설정
     min_attend_ratio:        float = 0.40
     punctuality_grace_ratio: float = 0.10
+    late_threshold_sec:      Optional[float] = None  # 지각 기준(초). None=구 방식(비율) 사용
+    late_max_sec:            Optional[float] = None  # 지각 최대 인정 시간(초). None=상한 없음
     absence_grace_sec:       float = 30.0   # 자리비움 인정 시간 (데이터 수집 레이어용)
  
     # 팀장 보정
@@ -115,6 +127,8 @@ class MemberMeetingData:
      - audio_loss_pct     (float): 오디오 캡처 손실 % (기본 0)
      - speech_confidence  (float): 음성인식 신뢰도 0~1 (기본 1.0)
      - excused_absence    (bool):  사유 결석 여부 (기본 False)
+     - excused_late        (bool):  사유 지각 여부 - True 면 지각 감점(정시 점수) 면제,
+                                    출석 비율(attend_ratio)에는 영향 없음 (기본 False)
      - absent             (bool):  완전 결석 여부 - 한 번도 참여 안 함 (기본 False)
      - is_official        (bool):  정규 회의 여부 - 누적 포함 판단용 (기본 True)
      - is_leader          (bool):  팀장 여부 (기본 False)
@@ -138,6 +152,7 @@ class MemberMeetingData:
     audio_loss_pct:    float = 0.0
     speech_confidence: float = 1.0
     excused_absence:   bool  = False
+    excused_late:      bool  = False
     absent:            bool  = False
     is_official:       bool  = True
     is_leader:         bool  = False

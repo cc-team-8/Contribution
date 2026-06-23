@@ -41,12 +41,36 @@ def test_speech_excluded_weight_redistribution():
     assert sum(r.weights_used.values()) == pytest.approx(1.0)
 
 
-# 최소 참여 기준 미달(33%) → 저참여 플래그 + 점수 하향
+# 최소 참여 기준 미달(33%) → 저참여 플래그 + 발언 점수와 무관하게 즉시 0점
 def test_low_attend_flag_and_penalty():
     full = calc_meeting_score(make_member(total_sec=3600, attend_sec=3600))
     low  = calc_meeting_score(make_member(total_sec=3600, attend_sec=1200))
     assert low.low_attend_flag is True
+    assert low.meeting_contribution == 0.0
     assert low.meeting_contribution < full.meeting_contribution
+
+
+# 최소 참여 기준 미달이어도 발언을 몰아서 해 speech_score가 만점이면 점수가
+# 새지 않고 그대로 0점이어야 한다 (예전엔 speech 쪽에 점수가 새서 0.9까지 나왔던 버그)
+def test_low_attend_overrides_high_speech_score():
+    r = calc_meeting_score(make_member(
+        total_sec=1800, attend_sec=360,  # 20% 출석, 기준(40%) 미달
+        own_chars=500, utterance_count=5, total_chars=500, team_size=1,
+    ))
+    assert r.low_attend_flag is True
+    assert r.meeting_contribution == 0.0
+    assert r.weights_used == {}
+
+
+# 출석 기준 충족(정확히 min_attend_ratio) → 0점 처리 안 되고 정상 계산
+def test_attend_exactly_at_minimum_not_penalized():
+    cfg = TeamSettings(min_attend_ratio=0.4)
+    r = calc_meeting_score(
+        make_member(total_sec=1800, attend_sec=720),  # 정확히 40%
+        cfg,
+    )
+    assert r.low_attend_flag is False
+    assert r.meeting_contribution > 0.0
 
 
 # 10분 회의 → 신뢰도 Low

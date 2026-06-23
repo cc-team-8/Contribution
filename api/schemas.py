@@ -32,6 +32,7 @@ class MemberMeetingDataSchema(BaseModel):
     audio_loss_pct:     float = 0.0
     speech_confidence:  float = 1.0
     excused_absence:    bool  = False
+    excused_late:       bool  = False
     absent:             bool  = False
     is_official:        bool  = True
     is_leader:          bool  = False
@@ -45,6 +46,8 @@ class TeamSettingsSchema(BaseModel):
     weight_volume_in_task:    float = 0.50
     min_attend_ratio:         float = 0.40
     punctuality_grace_ratio:  float = 0.10
+    late_threshold_sec:       Optional[float] = None
+    late_max_sec:             Optional[float] = None
     absence_grace_sec:        float = 30.0
     leader_bonus:             float = 0.2
     action_chars_limit:       int   = 500

@@ -20,6 +20,10 @@ def calc_meeting_score(
     """
     함수명: calc_meeting_score
     설명: 한 회의에서 한 팀원의 기여도(발언 + 참석)를 계산한다.
+          완전 결석(absent) 또는 최소 참여 기준(min_attend_ratio) 미달 시 발언
+          점수와 무관하게 즉시 0점을 반환한다. 회의 초반 잠깐 들어와 발언만
+          몰아치고 나가는 식으로 출석이 부실해도 speech_score 덕에 높은 점수를
+          받는 것을 막기 위함이다.
     입력:
      - data (MemberMeetingData): 팀원의 회의 데이터
      - cfg  (TeamSettings):      팀 설정. None 이면 기본값 사용
@@ -46,6 +50,31 @@ def calc_meeting_score(
             absent               = True,
         )
 
+    # 최소 참여 기준(min_attend_ratio) 미달 → 발언 점수와 무관하게 즉시 0점.
+    # 예: 회의 초반 잠깐 들어와 발언만 몰아치고 나가는 식으로 speech_score가
+    # 높아도 meeting_contribution이 따라 올라가는 것을 막는다.
+    attend_ratio = (
+        data.actual_attend_sec / data.meeting_total_sec
+        if data.meeting_total_sec > 0 else 0.0
+    )
+    low_attend = attend_ratio < cfg.min_attend_ratio
+
+    if low_attend:
+        return MeetingScore(
+            name                 = data.name,
+            meeting_id           = data.meeting_id,
+            meeting_total_sec    = data.meeting_total_sec,
+            speech_score         = calc_speech_score(data, cfg),
+            attend_score         = calc_attendance_score(data, cfg),
+            meeting_contribution = 0.0,
+            reliability          = get_reliability(data, 0),
+            low_attend_flag      = True,
+            weights_used         = {},
+            is_official          = data.is_official,
+            excused_absence      = data.excused_absence,
+            absent               = data.absent,
+        )
+
     # 1. 축별 점수 계산 (측정 불가 시 None)
     speech_s = calc_speech_score(data, cfg)
     attend_s = calc_attendance_score(data, cfg)
@@ -67,14 +96,6 @@ def calc_meeting_score(
     else:
         meeting_contribution = sum(v[0] * v[1] for v in measurable.values()) / total_weight
         weights_used         = {k: round(v[1] / total_weight, 6) for k, v in measurable.items()}
-
-    # 3. 최소 참여 기준 미달 여부 플래그만 표시
-    # 참석 점수(attend_score)에서 이미 출석 비율이 반영되므로 추가 하향 조정 없음
-    attend_ratio = (
-        data.actual_attend_sec / data.meeting_total_sec
-        if data.meeting_total_sec > 0 else 0.0
-    )
-    low_attend = attend_ratio < cfg.min_attend_ratio
 
     return MeetingScore(
         name                 = data.name,
